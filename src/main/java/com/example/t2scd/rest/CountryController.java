@@ -21,14 +21,8 @@ public class CountryController {
 
 	@PostMapping
 	public ResponseEntity<?> createCountry(@RequestBody CountryEntity countryEntity) {
-		try {
-			CountryEntity createdCountryEntity = countryService.saveCountry(countryEntity);
-			return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdCountryEntity.getId()));
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", "Country could not be created"));
-		}
+		CountryEntity createdCountryEntity = countryService.saveCountry(countryEntity);
+		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdCountryEntity.getId()));
 	}
 
 	@GetMapping
@@ -39,28 +33,16 @@ public class CountryController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateCountry(@PathVariable("id") int id, @RequestBody CountryEntity countryEntity) {
-		try {
-			if (countryEntity.getId() != id) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID in path and body must match");
-			}
-			countryService.updateCountry(id, countryEntity);
-			return ResponseEntity.ok("Country updated successfully");
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid country data");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Country not found");
+		if (countryEntity.getId() != id) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID in path and body must match");
 		}
+		countryService.updateCountry(id, countryEntity);
+		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteCountry(@PathVariable("id") int id) {
-		try {
-			countryService.deleteCountry(id);
-			return ResponseEntity.ok("Country deleted successfully");
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid ID provided");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Country not found");
-		}
+		countryService.deleteCountry(id);
+		return ResponseEntity.ok().build();
 	}
 }

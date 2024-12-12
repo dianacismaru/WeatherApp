@@ -20,7 +20,7 @@ public class CountryService {
 		}
 		Optional<CountryEntity> existingCountry = countryRepository.findByNume(countryEntity.getNume());
 		if (existingCountry.isPresent()) {
-			throw new IllegalArgumentException("Country with name " + countryEntity.getNume() + " already exists");
+			throw new RuntimeException("A country with nume " + countryEntity.getNume() + " already exists.");
 		}
 		return countryRepository.save(countryEntity);
 	}

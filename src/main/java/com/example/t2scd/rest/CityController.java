@@ -20,48 +20,35 @@ public class CityController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createCountry(@RequestBody CityEntity cityEntity) {
-		try {
-			CityEntity createdCityEntity = cityService.saveCountry(cityEntity);
-
-			return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdCityEntity.getId()));
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-		}
+	public ResponseEntity<?> createCity(@RequestBody CityEntity cityEntity) {
+		CityEntity createdCityEntity = cityService.saveCity(cityEntity);
+		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdCityEntity.getId()));
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CityEntity>> getAllCountries() {
-		List<CityEntity> cities = cityService.getAllCountries();
+	public ResponseEntity<List<CityEntity>> getAllCities() {
+		List<CityEntity> cities = cityService.getAllCities();
+		return ResponseEntity.ok(cities);
+	}
+
+	@GetMapping("/country/{idTara}")
+	public ResponseEntity<List<CityEntity>> getCitiesByCountry(@PathVariable("idTara") int idTara) {
+		List<CityEntity> cities = cityService.getCitiesByCountry(idTara);
 		return ResponseEntity.ok(cities);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateCountry(@PathVariable("id") int id, @RequestBody CityEntity cityEntity) {
-		try {
-			if (cityEntity.getId() != id) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-			}
-			cityService.updateCountry(id, cityEntity);
-			return ResponseEntity.ok("Country updated successfully");
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	public ResponseEntity<?> updateCity(@PathVariable("id") int id, @RequestBody CityEntity cityEntity) {
+		if (cityEntity.getId() != id) {
+			return ResponseEntity.badRequest().build();
 		}
+		cityService.updateCity(id, cityEntity);
+		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteCountry(@PathVariable("id") int id) {
-		try {
-			cityService.deleteCountry(id);
-			return ResponseEntity.ok("Country deleted successfully");
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+	public ResponseEntity<?> deleteCity(@PathVariable("id") int id) {
+		cityService.deleteCity(id);
+		return ResponseEntity.ok().build();
 	}
 }

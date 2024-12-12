@@ -5,15 +5,19 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(
+		name = "cities",
+		uniqueConstraints = @UniqueConstraint(columnNames = {"idTara", "nume"})
+)
 public class CityEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private Integer idTara;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String nume;
 
 	private Double lat;

@@ -2,10 +2,12 @@ package com.example.t2scd.application.usecases;
 
 import com.example.t2scd.entities.CityEntity;
 import com.example.t2scd.repositories.CityRepository;
+import com.example.t2scd.repositories.CountryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -13,42 +15,55 @@ import java.util.Optional;
 public class CityService {
 
 	private final CityRepository cityRepository;
+	private final CountryRepository countryRepository;
 	
-	public CityEntity saveCountry(CityEntity countryEntity) {
-		if (countryEntity.getNume() == null || countryEntity.getLat() == null || countryEntity.getLon() == null) {
+	public CityEntity saveCity(CityEntity cityEntity) {
+		if (cityEntity.getIdTara() == null || cityEntity.getNume() == null
+				|| cityEntity.getLat() == null || cityEntity.getLon() == null) {
 			throw new IllegalArgumentException("All fields must be provided");
 		}
-		Optional<CityEntity> existingCountry = cityRepository.findByNume(countryEntity.getNume());
-		if (existingCountry.isPresent()) {
-			throw new IllegalArgumentException("Country with name " + countryEntity.getNume() + " already exists");
+
+		boolean countryExists = countryRepository.existsById(cityEntity.getIdTara());
+		if (!countryExists) {
+			throw new NoSuchElementException("Country with ID " + cityEntity.getIdTara() + " does not exist");
 		}
-		return cityRepository.save(countryEntity);
+
+		Optional<CityEntity> existingCity = cityRepository.findByIdTaraAndNume(cityEntity.getIdTara(), cityEntity.getNume());
+		if (existingCity.isPresent()) {
+			throw new RuntimeException("City with name " + cityEntity.getNume() + " already exists in this country");
+		}
+
+		return cityRepository.save(cityEntity);
 	}
 
 
-	public List<CityEntity> getAllCountries() {
+	public List<CityEntity> getAllCities() {
 		return cityRepository.findAll();
 	}
 
-	public void updateCountry(int id, CityEntity updatedCountry) {
-		Optional<CityEntity> existingCountryOpt = cityRepository.findById(id);
-		if (existingCountryOpt.isPresent()) {
-			CityEntity existingCountry = existingCountryOpt.get();
-			existingCountry.setNume(updatedCountry.getNume());
-			existingCountry.setLat(updatedCountry.getLat());
-			existingCountry.setLon(updatedCountry.getLon());
-			cityRepository.save(existingCountry);
+	public void updateCity(int id, CityEntity updatedCity) {
+		Optional<CityEntity> existingCityOpt = cityRepository.findById(id);
+		if (existingCityOpt.isPresent()) {
+			CityEntity existingCity = existingCityOpt.get();
+			existingCity.setNume(updatedCity.getNume());
+			existingCity.setLat(updatedCity.getLat());
+			existingCity.setLon(updatedCity.getLon());
+			cityRepository.save(existingCity);
 		} else {
-			throw new IllegalArgumentException("Country with ID " + id + " not found.");
+			throw new NoSuchElementException("City with ID " + id + " not found.");
 		}
 	}
 
-	public void deleteCountry(int id) {
+	public void deleteCity(int id) {
 		if (cityRepository.existsById(id)) {
 			cityRepository.deleteById(id);
 		} else {
-			throw new IllegalArgumentException("Country with ID " + id + " not found.");
+			throw new NoSuchElementException("City with ID " + id + " not found.");
 		}
+	}
+
+	public List<CityEntity> getCitiesByCountry(int idTara) {
+		return cityRepository.findAllByIdTara(idTara);
 	}
 }
 
