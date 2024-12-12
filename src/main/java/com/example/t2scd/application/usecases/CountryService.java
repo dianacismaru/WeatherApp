@@ -2,19 +2,17 @@ package com.example.t2scd.application.usecases;
 
 import com.example.t2scd.entities.CountryEntity;
 import com.example.t2scd.repositories.CountryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class CountryService {
 
 	private final CountryRepository countryRepository;
-
-	public CountryService(CountryRepository countryRepository) {
-		this.countryRepository = countryRepository;
-	}
 
 	public CountryEntity saveCountry(CountryEntity countryEntity) {
 		if (countryEntity.getNume() == null || countryEntity.getLat() == null || countryEntity.getLon() == null) {
