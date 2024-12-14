@@ -3,6 +3,7 @@ package com.example.t2scd.application.usecases;
 import com.example.t2scd.application.dto.TemperatureDTO;
 import com.example.t2scd.entities.TemperatureEntity;
 import com.example.t2scd.repositories.CityRepository;
+import com.example.t2scd.repositories.CountryRepository;
 import com.example.t2scd.repositories.TemperatureRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class TemperatureService {
 	private final TemperatureRepository temperatureRepository;
 	private final CityRepository cityRepository;
+	private final CountryRepository countryRepository;
 
 	public TemperatureEntity saveTemperature(TemperatureEntity temperatureEntity) {
 		if (temperatureEntity.getValoare() == null || temperatureEntity.getIdOras() == null) {
@@ -77,7 +79,62 @@ public class TemperatureService {
 		return results.stream()
 				.map(entity -> new TemperatureDTO(entity.getId(), entity.getValoare(), entity.getTimestamp()))
 				.collect(Collectors.toList());
-
 	}
+
+	public List<TemperatureDTO> getTemperaturesByCity(Integer idOras, String from, String until) {
+		LocalDateTime fromDate = null;
+		LocalDateTime untilDate = null;
+
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			if (from != null) {
+				fromDate = LocalDate.parse(from, formatter).atStartOfDay();
+			}
+			if (until != null) {
+				untilDate = LocalDate.parse(until, formatter).atTime(23, 59, 59);
+			}
+		} catch (DateTimeParseException e) {
+			System.out.println(e.getMessage());
+			return List.of();
+		}
+
+		if (!cityRepository.existsById(idOras)) {
+			throw new NoSuchElementException("City with ID " + idOras + " does not exist");
+		}
+
+		List<TemperatureEntity> results = temperatureRepository.findTemperaturesByCity(idOras, fromDate, untilDate);
+		return results.stream()
+				.map(entity -> new TemperatureDTO(entity.getId(), entity.getValoare(), entity.getTimestamp()))
+				.collect(Collectors.toList());
+	}
+
+	public List<TemperatureDTO> getTemperaturesByCountry(Integer idTara, String from, String until) {
+		LocalDateTime fromDate = null;
+		LocalDateTime untilDate = null;
+
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			if (from != null) {
+				fromDate = LocalDate.parse(from, formatter).atStartOfDay();
+			}
+			if (until != null) {
+				untilDate = LocalDate.parse(until, formatter).atTime(23, 59, 59);
+			}
+		} catch (DateTimeParseException e) {
+			System.out.println(e.getMessage());
+			return List.of();
+		}
+
+		if (!countryRepository.existsById(idTara)) {
+			throw new NoSuchElementException("Country with ID " + idTara + " does not exist");
+		}
+
+		List<TemperatureEntity> temperatures = temperatureRepository.findTemperaturesByCountry(idTara, fromDate, untilDate);
+
+		return temperatures.stream()
+				.map(entity -> new TemperatureDTO(entity.getId(), entity.getValoare(), entity.getTimestamp()))
+				.collect(Collectors.toList());
+	}
+
 }
 

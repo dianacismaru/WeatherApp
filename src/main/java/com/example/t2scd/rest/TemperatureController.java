@@ -37,6 +37,26 @@ public class TemperatureController {
 		return ResponseEntity.ok(temperatures);
 	}
 
+	@GetMapping("/cities/{idOras}")
+	public ResponseEntity<List<TemperatureDTO>> getTemperaturesByCity(
+			@PathVariable Integer idOras,
+			@RequestParam(required = false) String from,
+			@RequestParam(required = false) String until) {
+
+		List<TemperatureDTO> temperatures = temperatureService.getTemperaturesByCity(idOras, from, until);
+		return ResponseEntity.ok(temperatures);
+	}
+
+	@GetMapping("/countries/{idTara}")
+	public ResponseEntity<List<TemperatureDTO>> getTemperaturesByCountry(
+			@PathVariable Integer idTara,
+			@RequestParam(required = false) String from,
+			@RequestParam(required = false) String until) {
+
+		List<TemperatureDTO> temperatures = temperatureService.getTemperaturesByCountry(idTara, from, until);
+		return ResponseEntity.ok(temperatures);
+	}
+
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateTemperature(@PathVariable("id") int id, @RequestBody TemperatureEntity temperatureEntity) {
 		if (temperatureEntity.getId() != id) {

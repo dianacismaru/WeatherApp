@@ -39,9 +39,58 @@ public class TemperatureRepositoryCustomImpl implements TemperatureRepositoryCus
 			}
 
 			citySubquery.select(city.get("id")).where(cityPredicates.toArray(new Predicate[0]));
-
 			predicates.add(temperature.get("idOras").in(citySubquery));
 		}
+
+		if (fromDate != null) {
+			predicates.add(cb.greaterThanOrEqualTo(temperature.get("timestamp"), fromDate));
+		}
+		if (untilDate != null) {
+			predicates.add(cb.lessThanOrEqualTo(temperature.get("timestamp"), untilDate));
+		}
+
+		query.where(predicates.toArray(new Predicate[0]));
+
+		TypedQuery<TemperatureEntity> typedQuery = entityManager.createQuery(query);
+		return typedQuery.getResultList();
+	}
+
+	@Override
+	public List<TemperatureEntity> findTemperaturesByCity(Integer idOras, LocalDateTime fromDate, LocalDateTime untilDate) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<TemperatureEntity> query = cb.createQuery(TemperatureEntity.class);
+		Root<TemperatureEntity> temperature = query.from(TemperatureEntity.class);
+
+		List<Predicate> predicates = new ArrayList<>();
+		predicates.add(cb.equal(temperature.get("idOras"), idOras));
+
+		if (fromDate != null) {
+			predicates.add(cb.greaterThanOrEqualTo(temperature.get("timestamp"), fromDate));
+		}
+		if (untilDate != null) {
+			predicates.add(cb.lessThanOrEqualTo(temperature.get("timestamp"), untilDate));
+		}
+
+		query.where(predicates.toArray(new Predicate[0]));
+
+		TypedQuery<TemperatureEntity> typedQuery = entityManager.createQuery(query);
+		return typedQuery.getResultList();
+	}
+
+	@Override
+	public List<TemperatureEntity> findTemperaturesByCountry(Integer idTara, LocalDateTime fromDate, LocalDateTime untilDate) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<TemperatureEntity> query = cb.createQuery(TemperatureEntity.class);
+		Root<TemperatureEntity> temperature = query.from(TemperatureEntity.class);
+
+		List<Predicate> predicates = new ArrayList<>();
+
+		Subquery<Integer> citySubquery = query.subquery(Integer.class);
+		Root<CityEntity> city = citySubquery.from(CityEntity.class);
+		citySubquery.select(city.get("id"))
+				.where(cb.equal(city.get("idTara"), idTara));
+
+		predicates.add(temperature.get("idOras").in(citySubquery));
 
 		if (fromDate != null) {
 			predicates.add(cb.greaterThanOrEqualTo(temperature.get("timestamp"), fromDate));

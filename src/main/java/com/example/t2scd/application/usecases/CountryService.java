@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -47,7 +48,7 @@ public class CountryService {
 		if (countryRepository.existsById(id)) {
 			countryRepository.deleteById(id);
 		} else {
-			throw new IllegalArgumentException("Country with ID " + id + " not found.");
+			throw new NoSuchElementException("Country with ID " + id + " not found.");
 		}
 	}
 }
