@@ -1,0 +1,12 @@
+# Ignore local volumes
+postgres_data/
+
+# Ignore tmp files
+target/
+*.log
+*.tmp
+
+# Ignore local configuration files
+*.env
+.idea/
+.vscode/
