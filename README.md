@@ -59,3 +59,6 @@ be used to verify connectivity between containers:
   docker exec -it tema2-app-1 ping db
    ```
 
+## Resources:
+- [Docker Multi-Stage](https://docs.docker.com/build/building/multi-stage/)
+- [Docker-Compose with Postgres & Spring-Boot](https://www.youtube.com/watch?v=lS1GwdIfk0c)
