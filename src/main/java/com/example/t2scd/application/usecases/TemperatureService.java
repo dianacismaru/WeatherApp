@@ -38,6 +38,10 @@ public class TemperatureService {
 	}
 	
 	public void updateTemperature(int id, TemperatureEntity updatedTemperature) {
+		if (updatedTemperature.getId() != id) {
+			throw new IllegalArgumentException("ID in path and body must match");
+		}
+
 		Optional<TemperatureEntity> existingTemperatureOpt = temperatureRepository.findById(id);
 		if (existingTemperatureOpt.isPresent()) {
 			TemperatureEntity existingTemperature = existingTemperatureOpt.get();

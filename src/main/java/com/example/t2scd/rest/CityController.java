@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,27 +20,22 @@ public class CityController {
 
 	@PostMapping
 	public ResponseEntity<?> createCity(@RequestBody CityEntity cityEntity) {
-		CityEntity createdCityEntity = cityService.saveCity(cityEntity);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdCityEntity.getId()));
+		int cityId = cityService.saveCity(cityEntity).getId();
+		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", cityId));
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CityEntity>> getAllCities() {
-		List<CityEntity> cities = cityService.getAllCities();
-		return ResponseEntity.ok(cities);
+	public ResponseEntity<?> getAllCities() {
+		return ResponseEntity.ok(cityService.getAllCities());
 	}
 
 	@GetMapping("/country/{idTara}")
-	public ResponseEntity<List<CityEntity>> getCitiesByCountry(@PathVariable("idTara") int idTara) {
-		List<CityEntity> cities = cityService.getCitiesByCountry(idTara);
-		return ResponseEntity.ok(cities);
+	public ResponseEntity<?> getCitiesByCountry(@PathVariable("idTara") int idTara) {
+		return ResponseEntity.ok(cityService.getCitiesByCountry(idTara));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateCity(@PathVariable("id") int id, @RequestBody CityEntity cityEntity) {
-		if (cityEntity.getId() != id) {
-			return ResponseEntity.badRequest().build();
-		}
 		cityService.updateCity(id, cityEntity);
 		return ResponseEntity.ok().build();
 	}

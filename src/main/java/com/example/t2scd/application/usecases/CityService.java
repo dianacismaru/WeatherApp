@@ -42,6 +42,10 @@ public class CityService {
 	}
 
 	public void updateCity(int id, CityEntity updatedCity) {
+		if (updatedCity.getId() != id) {
+			throw new IllegalArgumentException("ID in path and body must match");
+		}
+
 		Optional<CityEntity> existingCityOpt = cityRepository.findById(id);
 		if (existingCityOpt.isPresent()) {
 			CityEntity existingCity = existingCityOpt.get();

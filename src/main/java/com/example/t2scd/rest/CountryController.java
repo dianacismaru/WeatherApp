@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,21 +20,17 @@ public class CountryController {
 
 	@PostMapping
 	public ResponseEntity<?> createCountry(@RequestBody CountryEntity countryEntity) {
-		CountryEntity createdCountryEntity = countryService.saveCountry(countryEntity);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdCountryEntity.getId()));
+		int countryId = countryService.saveCountry(countryEntity).getId();
+		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", countryId));
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CountryEntity>> getAllCountries() {
-		List<CountryEntity> countries = countryService.getAllCountries();
-		return ResponseEntity.ok(countries);
+	public ResponseEntity<?> getAllCountries() {
+		return ResponseEntity.ok(countryService.getAllCountries());
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateCountry(@PathVariable("id") int id, @RequestBody CountryEntity countryEntity) {
-		if (countryEntity.getId() != id) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID in path and body must match");
-		}
 		countryService.updateCountry(id, countryEntity);
 		return ResponseEntity.ok().build();
 	}

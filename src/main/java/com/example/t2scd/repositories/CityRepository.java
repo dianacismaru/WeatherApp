@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CityRepository extends JpaRepository<CityEntity, Integer> {
-	Optional<CityEntity> findByNume(String nume);
 	Optional<CityEntity> findByIdTaraAndNume(Integer idTara, String nume);
 	List<CityEntity> findAllByIdTara(Integer idTara);
 }

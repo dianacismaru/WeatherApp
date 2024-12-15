@@ -1,13 +1,11 @@
 package com.example.t2scd.rest;
 
-import com.example.t2scd.application.dto.TemperatureDTO;
 import com.example.t2scd.application.usecases.TemperatureService;
 import com.example.t2scd.entities.TemperatureEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,46 +20,41 @@ public class TemperatureController {
 
 	@PostMapping
 	public ResponseEntity<?> createTemperature(@RequestBody TemperatureEntity temperatureEntity) {
-		TemperatureEntity createdTemperatureEntity = temperatureService.saveTemperature(temperatureEntity);
-		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", createdTemperatureEntity.getId()));
+		int temperatureId = temperatureService.saveTemperature(temperatureEntity).getId();
+		return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("id", temperatureId));
 	}
 
 	@GetMapping
-	public ResponseEntity<List<TemperatureDTO>> getTemperatures(
+	public ResponseEntity<?> getTemperatures(
 			@RequestParam(required = false) Double lat,
 			@RequestParam(required = false) Double lon,
 			@RequestParam(required = false) String from,
 			@RequestParam(required = false) String until) {
 
-		List<TemperatureDTO> temperatures = temperatureService.getTemperatures(lat, lon, from, until);
-		return ResponseEntity.ok(temperatures);
+		return ResponseEntity.ok(temperatureService.getTemperatures(lat, lon, from, until));
 	}
 
 	@GetMapping("/cities/{idOras}")
-	public ResponseEntity<List<TemperatureDTO>> getTemperaturesByCity(
+	public ResponseEntity<?> getTemperaturesByCity(
 			@PathVariable Integer idOras,
 			@RequestParam(required = false) String from,
 			@RequestParam(required = false) String until) {
 
-		List<TemperatureDTO> temperatures = temperatureService.getTemperaturesByCity(idOras, from, until);
-		return ResponseEntity.ok(temperatures);
+		return ResponseEntity.ok(temperatureService.getTemperaturesByCity(idOras, from, until));
 	}
 
 	@GetMapping("/countries/{idTara}")
-	public ResponseEntity<List<TemperatureDTO>> getTemperaturesByCountry(
+	public ResponseEntity<?> getTemperaturesByCountry(
 			@PathVariable Integer idTara,
 			@RequestParam(required = false) String from,
 			@RequestParam(required = false) String until) {
 
-		List<TemperatureDTO> temperatures = temperatureService.getTemperaturesByCountry(idTara, from, until);
-		return ResponseEntity.ok(temperatures);
+		return ResponseEntity.ok(temperatureService.getTemperaturesByCountry(idTara, from, until));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateTemperature(@PathVariable("id") int id, @RequestBody TemperatureEntity temperatureEntity) {
-		if (temperatureEntity.getId() != id) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ID in path and body must match");
-		}
+	public ResponseEntity<?> updateTemperature(@PathVariable("id") int id, 
+											   @RequestBody TemperatureEntity temperatureEntity) {
 		temperatureService.updateTemperature(id, temperatureEntity);
 		return ResponseEntity.ok().build();
 	}

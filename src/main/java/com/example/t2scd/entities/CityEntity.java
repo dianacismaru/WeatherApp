@@ -21,5 +21,6 @@ public class CityEntity {
 	private String nume;
 
 	private Double lat;
+
 	private Double lon;
 }

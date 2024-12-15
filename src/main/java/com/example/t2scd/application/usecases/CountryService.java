@@ -32,6 +32,10 @@ public class CountryService {
 	}
 
 	public void updateCountry(int id, CountryEntity updatedCountry) {
+		if (updatedCountry.getId() != id) {
+			throw new IllegalArgumentException("ID in path and body must match");
+		}
+
 		Optional<CountryEntity> existingCountryOpt = countryRepository.findById(id);
 		if (existingCountryOpt.isPresent()) {
 			CountryEntity existingCountry = existingCountryOpt.get();
