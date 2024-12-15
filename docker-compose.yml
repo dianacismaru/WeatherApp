@@ -4,16 +4,19 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "6000:8080"
     depends_on:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/weather_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+    networks:
+      - app-network
+      - db-network
 
   db:
-    image: postgres:17
+    image: postgres:latest
     container_name: postgres
     environment:
       POSTGRES_USER: postgres
@@ -23,6 +26,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - db-network
+
+networks:
+  app-network:
+    driver: bridge
+  db-network:
+    driver: bridge
 
 volumes:
   postgres_data:
